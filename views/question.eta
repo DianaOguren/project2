@@ -1,0 +1,42 @@
+<% layout("./layouts/layout.eta") %>
+
+<h1>Question title: <%= it.obj.title %></h1>
+<h1>Question: <%= it.obj.question_text %></h1>
+
+<h2>Add answer option</h2>
+
+<% if (it.obj.errors) { %>
+<ul>
+    <% Object.keys(it.obj.errors).forEach((attribute) => { %>
+        <% Object.values(it.obj.errors[attribute]).forEach((err) => { %>
+            <li><%= err %></li>
+        <% }); %>
+    <% }); %>
+</ul>
+<% } %>
+
+<form method="post" action="/questions/<%= it.idQuestion %>/options" id="submitform">
+
+  <input type="checkbox" name="is_correct" id="check"><label for="check">True answer</label>
+  <textarea name="option_text"></textarea>
+
+<input type="submit" value="Submit">
+</form>
+
+<h1>Answer options:</h1>
+
+<% it.options.forEach((option) => { %>
+  <li>
+    Option text: <%= option.option_text %><br>
+    Correctness: <%= option.is_correct  %><br>
+    <form method="POST" action="/questions/<%= option.question_id %>/options/<%= option.id %>/delete">
+      <input type="submit" value="Delete option" />
+    </form>
+  </li><br>
+<% }); %>
+
+<% if (it.options == 0) { %>
+  <form method="POST" action="/questions/<%= it.idQuestion %>/delete">
+      <input type="submit" value="Delete question" />
+    </form>
+<% } %>
